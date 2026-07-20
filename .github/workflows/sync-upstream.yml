@@ -8,6 +8,10 @@ on:
     - cron: "0 0 * * 1" # every Monday 00:00 UTC
   workflow_dispatch:
 
+concurrency:
+  group: upstream-sync-${{ github.repository }}
+  cancel-in-progress: false
+
 jobs:
   sync_latest_from_upstream:
     name: Sync latest commits from upstream repo
@@ -17,20 +21,82 @@ jobs:
     steps:
       - name: Checkout target repo
         uses: actions/checkout@v6
-
-      - name: Sync upstream changes
-        id: sync
-        uses: aormsby/Fork-Sync-With-Upstream-action@v3.4
         with:
-          upstream_sync_repo: miantiao-me/Sink
-          upstream_sync_branch: master
-          target_sync_branch: master
-          target_repo_token: ${{ secrets.GITHUB_TOKEN }}
-          test_mode: false
+          ref: master
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Sync check
+      - name: Sync upstream (conflict-resilient)
+        env:
+          UPSTREAM_REPO: miantiao-me/Sink
+          UPSTREAM_BRANCH: master
+          TARGET_BRANCH: master
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          KEEP_OURS=(
+            .github/workflows/sync-upstream.yml
+          )
+
+          git remote remove upstream 2>/dev/null || true
+          git remote add upstream "https://github.com/${UPSTREAM_REPO}.git"
+          git fetch --tags upstream
+          git checkout "${TARGET_BRANCH}"
+          git pull origin "${TARGET_BRANCH}" --ff-only || git pull origin "${TARGET_BRANCH}"
+
+          before=$(git rev-parse HEAD)
+
+          tmp=$(mktemp -d)
+          for f in "${KEEP_OURS[@]}"; do
+            if [ -e "$f" ]; then
+              mkdir -p "$tmp/$(dirname "$f")"
+              cp -a "$f" "$tmp/$f"
+            fi
+          done
+
+          if git merge --no-edit "upstream/${UPSTREAM_BRANCH}"; then
+            echo "Clean merge (or already up to date)"
+          else
+            echo "Conflicts detected — preferring upstream, then restoring KEEP_OURS"
+            while IFS= read -r f; do
+              [ -z "$f" ] && continue
+              if git checkout --theirs -- "$f" 2>/dev/null; then
+                git add -- "$f"
+              else
+                git rm -f -- "$f" 2>/dev/null || true
+              fi
+            done < <(git diff --name-only --diff-filter=U)
+            git commit --no-edit -m "chore: merge upstream/${UPSTREAM_BRANCH} (auto-resolve conflicts)"
+          fi
+
+          for f in "${KEEP_OURS[@]}"; do
+            if [ -e "$tmp/$f" ]; then
+              mkdir -p "$(dirname "$f")"
+              cp -a "$tmp/$f" "$f"
+              git add -- "$f"
+            fi
+          done
+
+          if ! git diff --cached --quiet; then
+            git commit -m "chore: restore fork-specific files after upstream sync"
+          fi
+
+          after=$(git rev-parse HEAD)
+          if [ "$before" = "$after" ]; then
+            echo "No new commits from upstream."
+          else
+            git push origin "${TARGET_BRANCH}"
+          fi
+
+      - name: Sync failure guidance
         if: failure()
         run: |
-          echo "[Error] 由于上游仓库的 workflow 文件变更，导致 GitHub 自动暂停了本次自动更新，你需要手动 Sync Fork 一次。"
-          echo "[Error] Due to a change in the workflow file of the upstream repository, GitHub has automatically suspended the scheduled automatic update. You need to manually sync your fork."
+          {
+            echo "## Upstream sync failed"
+            echo
+            echo "Automatic merge/conflict resolution failed. Check the job log,"
+            echo "fix locally, or open a PR from upstream and resolve manually."
+          } >> "$GITHUB_STEP_SUMMARY"
           exit 1
