@@ -1,7 +1,8 @@
 import { timingSafeEqual } from 'node:crypto'
 
 export default eventHandler(async (event) => {
-  if (!event.path.startsWith('/api/'))
+  // Protect /api/* and the MCP endpoint (/mcp) with the same auth layer.
+  if (!event.path.startsWith('/api/') && event.path !== '/mcp')
     return
 
   const token = getHeader(event, 'Authorization')?.replace(/^Bearer\s+/, '')
