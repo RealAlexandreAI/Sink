@@ -9,11 +9,14 @@ import { LINK_PASSWORD_HASH_PREFIX, LINK_PASSWORD_MASK_PREFIX } from '../shared/
 export const db = drizzle(env.DB)
 
 export function fetchWithAuth(path: string, options?: RequestInit): Promise<Response> {
+  // Simulate Cloudflare Access edge verification: inject the headers the edge
+  // would set after authenticating a human (email OTP) or service token.
   const request = new Request(`http://localhost${path}`, {
     ...options,
     headers: {
       ...options?.headers,
-      Authorization: `Bearer ${import.meta.env.NUXT_SITE_TOKEN}`,
+      'Cf-Access-Jwt-Assertion': 'test-assertion',
+      'Cf-Access-Authenticated-User-Email': 'tester@localhost',
     },
   })
   return exports.default.fetch(request)

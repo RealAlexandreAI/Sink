@@ -6,8 +6,8 @@ import { CreateLinkSchema } from '#shared/schemas/link'
 /**
  * MCP 2.0 (2026-07-28) server factory for Sink.
  *
- * Auth is inherited from `server/middleware/2.auth.ts`: site-token (root)
- * or Cloudflare Access identity. Every request to /api/* and /mcp is
+ * Auth is inherited from `server/middleware/2.auth.ts`: Cloudflare Access
+ * (email OTP for humans, service token for machines). Every request to /api/* and /mcp is
  * authenticated before reaching here.
  *
  * One McpServer is built per request (closure over the H3Event) so tool

@@ -19,9 +19,8 @@ const open = defineModel<boolean>('open', { default: false })
 const { authMethod, accessEnabled, clearAuthSession } = useAuthSession()
 
 function logOut() {
-  const method = authMethod.value || (getAuthToken() ? 'site-token' : 'access-user')
+  const method = authMethod.value || 'access-user'
   const shouldLogoutAccess = accessEnabled.value || method === 'access-user' || method === 'access-service'
-  removeAuthToken()
   clearAuthSession()
 
   if (shouldLogoutAccess) {

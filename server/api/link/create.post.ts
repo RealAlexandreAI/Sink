@@ -8,7 +8,7 @@ defineRouteMeta({
           bearerAuth: {
             type: 'http',
             scheme: 'bearer',
-            description: 'Use NUXT_SITE_TOKEN as the bearer token',
+            description: 'Cloudflare Access service token (CF-Access-Client-Id/Secret)',
           },
         },
       },

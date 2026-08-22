@@ -18,8 +18,7 @@ export default eventHandler((event) => {
   const userEmail: unknown = event.context.userEmail
   if (
     (
-      authMethod !== 'site-token'
-      && authMethod !== 'access-user'
+      authMethod !== 'access-user'
       && authMethod !== 'access-service'
     )
     || typeof userID !== 'string'

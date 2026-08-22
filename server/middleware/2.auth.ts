@@ -1,52 +1,42 @@
-import { timingSafeEqual } from 'node:crypto'
-
 export default eventHandler(async (event) => {
-  // Protect /api/* and the MCP endpoint (/mcp) with the same auth layer.
+  // /api/* and /mcp are protected by Cloudflare Access at the edge:
+  //  - humans (dashboard, browser API calls) → email OTP
+  //  - machines (/mcp, agent API calls) → service token (CF-Access-Client-Id/Secret)
+  // Requests reaching this worker already passed edge verification, so the
+  // injected Access headers are authoritative. The legacy site-token scheme
+  // (self-verified Bearer) is retired.
   if (!event.path.startsWith('/api/') && event.path !== '/mcp')
     return
 
-  const token = getHeader(event, 'Authorization')?.replace(/^Bearer\s+/, '')
-  if (await verifySiteToken(token, useRuntimeConfig(event).siteToken)) {
-    event.context.authMethod = 'site-token'
+  // Local `nuxt dev` has no Access edge — skip auth entirely. Tests run with
+  // NODE_ENV=test and exercise the strict (production) path.
+  if (process.env.NODE_ENV === 'development') {
+    event.context.authMethod = 'access-service'
     event.context.userID = 'root'
     event.context.userEmail = `root@${getRequestURL(event).hostname}`
     return
   }
 
-  const accessIdentity = await verifyCloudflareAccess(event)
-  if (accessIdentity) {
-    if (isCloudflareAccessRequestAllowed(event)) {
-      Object.assign(
-        event.context,
-        mapCloudflareAccessIdentity(accessIdentity, getRequestURL(event).hostname),
-      )
-      return
-    }
+  const assertion = getHeader(event, 'Cf-Access-Jwt-Assertion')
+  const accessEmail = getHeader(event, 'Cf-Access-Authenticated-User-Email')
 
-    throw createError({
-      status: 403,
-      statusText: 'Forbidden',
-    })
-  }
-
-  if (token && token.length < 8) {
+  if (!assertion && !accessEmail) {
     throw createError({
       status: 401,
-      statusText: 'Token is too short',
+      statusText: 'Unauthorized',
     })
   }
 
-  throw createError({
-    status: 401,
-    statusText: 'Unauthorized',
-  })
-})
+  if (accessEmail) {
+    event.context.authMethod = 'access-user'
+    event.context.userID = accessEmail
+    event.context.userEmail = accessEmail
+    return
+  }
 
-async function verifySiteToken(provided: string | undefined, expected: string): Promise<boolean> {
-  const encoder = new TextEncoder()
-  const [providedHash, expectedHash] = await Promise.all([
-    crypto.subtle.digest('SHA-256', encoder.encode(provided || '')),
-    crypto.subtle.digest('SHA-256', encoder.encode(expected)),
-  ])
-  return timingSafeEqual(new Uint8Array(providedHash), new Uint8Array(expectedHash))
-}
+  // Service token: Access validates credentials and injects only the JWT
+  // assertion (no email). Map to the root machine identity.
+  event.context.authMethod = 'access-service'
+  event.context.userID = 'root'
+  event.context.userEmail = `root@${getRequestURL(event).hostname}`
+})

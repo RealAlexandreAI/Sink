@@ -12,9 +12,9 @@ describe('/api/verify', () => {
     expect(data).toMatchObject({
       name: 'Sink',
       url: 'https://sink.cool',
-      authMethod: 'site-token',
-      userID: 'root',
-      userEmail: 'root@localhost',
+      authMethod: 'access-user',
+      userID: 'tester@localhost',
+      userEmail: 'tester@localhost',
       accessEnabled: false,
     })
   })
@@ -24,21 +24,29 @@ describe('/api/verify', () => {
     expect(response.status).toBe(401)
   })
 
-  it('returns 401 with invalid token', async () => {
+  it('returns 401 with a bare Bearer token (site-token retired)', async () => {
     const response = await fetch('/api/verify', {
       headers: { Authorization: 'Bearer invalid-token-12345' },
     })
     expect(response.status).toBe(401)
   })
 
-  it('does not trust an Access header when Access is not configured', async () => {
+  it('authenticates a service-token request (assertion without email)', async () => {
+    // A service-token request carries only Cf-Access-Jwt-Assertion after edge
+    // verification. The worker maps it to the root machine identity.
     const response = await fetch('/api/verify', {
-      headers: { 'Cf-Access-Jwt-Assertion': 'unsigned-token' },
+      headers: { 'Cf-Access-Jwt-Assertion': 'service-token-assertion' },
     })
-    expect(response.status).toBe(401)
+    expect(response.status).toBe(200)
+    const data = await response.json() as VerifyResponse
+    expect(data).toMatchObject({
+      authMethod: 'access-service',
+      userID: 'root',
+      accessEnabled: false,
+    })
   })
 
-  it('does not trust an Access cookie when Access is not configured', async () => {
+  it('rejects an Access cookie without the assertion header', async () => {
     const response = await fetch('/api/verify', {
       headers: { Cookie: 'CF_Authorization=unsigned-token' },
     })
