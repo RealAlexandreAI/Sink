@@ -37,7 +37,7 @@ pnpm test --run -t 'creates new link'     # tests matching a name
 ```
 
 - ESLint and TypeScript extend generated `.nuxt` files. If they are missing, run `pnpm postinstall` (or `pnpm install`) before diagnosing config errors.
-- Authenticated tests need `NUXT_SITE_TOKEN`; local values are loaded from `.env`, with `.env.example` as the template.
+- Authenticated tests simulate Cloudflare Access edge headers (`Cf-Access-Jwt-Assertion` + `Cf-Access-Authenticated-User-Email`) via `tests/utils.ts` `fetchWithAuth`. There is no site-token anymore — auth is Cloudflare Access at the edge.
 - There is no validation CI workflow. Run the relevant lint, typecheck, and test commands locally.
 - The pre-commit hook only runs `eslint --fix` on staged JS/TS/Vue files; it does not replace full-project verification.
 

@@ -63,7 +63,6 @@ description: 通过 Git 集成和仪表盘管理的绑定将 Sink 部署到 Clou
 
 | 运行时变量                 | 类型     | 填什么                                                      |
 | -------------------------- | -------- | ----------------------------------------------------------- |
-| `NUXT_SITE_TOKEN`          | 加密密钥 | 仪表盘登录密码和 API 密码（高强度、稳定，至少 8 个字符）    |
 | `NUXT_CF_ACCOUNT_ID`       | 变量     | Cloudflare 账户 ID（访问分析用）                            |
 | `NUXT_CF_API_TOKEN`        | 加密密钥 | 仅含 **Account → Account Analytics → Read** 的 Custom Token |
 
@@ -79,7 +78,7 @@ Pages 会把仪表盘中的这套变量同时提供给构建和运行环境，�
 
 如需通过 CLI 手动部署，请先完成构建。`pnpm deploy:pages` 假定 `dist` 已存在：它先根据 `DEPLOY_*` 值生成 `wrangler.deploy.jsonc` 并执行远程 D1 迁移，再通过 Wrangler 上传 `dist`；该命令不会执行应用构建。
 
-1. 打开 `/dashboard`，用 `NUXT_SITE_TOKEN` 登录
+1. 打开 `/dashboard`，通过 Cloudflare Access（邮箱 OTP）登录
 2. 打开一次 **Dashboard → Links**（一次性存储初始化）
 3. 创建链接
 

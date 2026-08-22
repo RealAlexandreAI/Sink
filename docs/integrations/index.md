@@ -37,7 +37,7 @@ Requires [`uv`](https://github.com/astral-sh/uv) so the `uvx` command is availab
 }
 ```
 
-Use your own instance URL and site token. Restrict the exposed route set to the operations the client needs, and protect the client configuration as a secret. See [API authentication](/api/#authentication).
+Use your own instance URL and a Cloudflare Access service token. Restrict the exposed route set to the operations the client needs, and protect the client credentials as a secret. See [API authentication](/api/#authentication).
 
 ## Apps and extensions
 

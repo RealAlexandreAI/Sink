@@ -9,7 +9,7 @@ All values are strings. Boolean switches use `true` unless noted.
 
 **What most people need**
 
-- Always: `NUXT_SITE_TOKEN`, D1 (`DB`), KV (`KV`), and their IDs
+- Always: D1 (`DB`), KV (`KV`), and their IDs. Authentication is Cloudflare Access at the edge — no site token needed
 - For analytics: `ANALYTICS` binding + `NUXT_CF_ACCOUNT_ID` + `NUXT_CF_API_TOKEN` — see [Analytics](/features/analytics)
 - Everything else is optional
 
@@ -46,15 +46,12 @@ Analytics is optional. Without it, short links and the dashboard still work; cha
 
 ## Required
 
-::: warning `NUXT_SITE_TOKEN`
-Set this yourself. It is the **dashboard login password** and the **API password**. At least 8 characters; longer is better. Keep it stable.
-
-If you leave it empty, Sink may invent a random password at build time that can change on the next deploy.
+::: warning Authentication is Cloudflare Access
+Dashboard, API and MCP are protected by Cloudflare Access (email OTP for humans, service token for machines). The legacy `NUXT_SITE_TOKEN` scheme is retired. See [Cloudflare Access](/configuration/cloudflare-access).
 :::
 
 | Variable                 | When             | Where                                | Purpose                                   |
 | ------------------------ | ---------------- | ------------------------------------ | ----------------------------------------- |
-| `NUXT_SITE_TOKEN`        | Runtime (secret) | Encrypted secret on Workers or Pages | Login + API password                      |
 | `DEPLOY_D1_DATABASE_ID`  | Build            | Workers Builds or Pages variables    | D1 database ID (from the D1 detail page)  |
 | `DEPLOY_KV_NAMESPACE_ID` | Build            | Workers Builds or Pages variables    | KV namespace ID (from the KV detail page) |
 

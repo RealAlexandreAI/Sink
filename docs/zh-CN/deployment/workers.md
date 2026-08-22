@@ -43,13 +43,12 @@ description: 通过 Git 集成将 Sink 部署到 Cloudflare Workers。
 
 `pnpm deploy:worker` 会根据这些值生成被 gitignore 的 `wrangler.deploy.jsonc`，更新 D1 结构后部署。连接仓库时 Cloudflare 会生成部署令牌 — 不用再单独粘贴部署密钥。
 
-## 3. 应用设置（登录密码等）
+## 3. 应用设置（可选变量）
 
 在 **Settings → Variables and Secrets** 中添加：
 
 | 变量                 | 类型     | 用途                                                 |
 | -------------------- | -------- | ---------------------------------------------------- |
-| `NUXT_SITE_TOKEN`    | 加密密钥 | 仪表盘登录密码和 API 密码（至少 8 个字符，保持稳定） |
 | `NUXT_CF_ACCOUNT_ID` | 变量     | 访问分析推荐                                         |
 | `NUXT_CF_API_TOKEN`  | 加密密钥 | 访问分析推荐                                         |
 
@@ -61,7 +60,7 @@ description: 通过 Git 集成将 Sink 部署到 Cloudflare Workers。
 
 从 `master` 启动构建，等待完成。
 
-1. 打开 `/dashboard`，用 `NUXT_SITE_TOKEN` 登录
+1. 打开 `/dashboard`，通过 Cloudflare Access（邮箱 OTP）登录
 2. 打开一次 **Dashboard → Links**（一次性存储初始化）
 3. 创建链接
 

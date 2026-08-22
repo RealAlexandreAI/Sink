@@ -37,7 +37,7 @@ Sink 不提供原生 MCP Server。OpenAPI 代理可以向 MCP 客户端公开选
 }
 ```
 
-使用你自己的实例 URL 和站点令牌。将公开的路由范围限制为客户端所需的操作，并将客户端配置作为密钥保护。详见 [API 身份认证](/zh-CN/api/#身份认证)。
+使用你自己的实例 URL 和 Cloudflare Access Service Token。将公开的路由范围限制为客户端所需的操作，并将客户端凭据作为密钥保护。详见 [API 身份认证](/zh-CN/api/#身份认证)。
 
 ## 应用与扩展
 

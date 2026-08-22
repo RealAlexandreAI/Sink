@@ -9,7 +9,7 @@ description: Sink 支持的全部环境变量——做什么、填在哪、什�
 
 **大多数人需要的**
 
-- 必配：`NUXT_SITE_TOKEN`、D1（`DB`）、KV（`KV`）以及它们的 ID
+- 必配：D1（`DB`）、KV（`KV`）以及它们的 ID。认证走 Cloudflare Access 边缘，不再需要站点令牌
 - 访问分析：`ANALYTICS` 绑定 + `NUXT_CF_ACCOUNT_ID` + `NUXT_CF_API_TOKEN` — 见[访问分析](/zh-CN/features/analytics)
 - 其余都是可选
 
@@ -46,15 +46,12 @@ description: Sink 支持的全部环境变量——做什么、填在哪、什�
 
 ## 必须配置
 
-::: warning `NUXT_SITE_TOKEN`
-请自己设置。这是**仪表盘登录密码**，也是 **API 密码**。至少 8 个字符，越长越好。保持稳定。
-
-如果留空，Sink 可能在构建时随机生成密码，下次部署可能变化。
+::: warning 认证走 Cloudflare Access
+仪表盘、API 和 MCP 由 Cloudflare Access 保护（人用邮箱 OTP，机器用 Service Token）。旧版 `NUXT_SITE_TOKEN` 已退役。参见 [Cloudflare Access](/zh-CN/configuration/cloudflare-access)。
 :::
 
 | 变量                     | 时机           | 放哪里                       | 用途                           |
 | ------------------------ | -------------- | ---------------------------- | ------------------------------ |
-| `NUXT_SITE_TOKEN`        | 运行时（密钥） | Workers 或 Pages 的加密密钥  | 登录 + API 密码                |
 | `DEPLOY_D1_DATABASE_ID`  | 构建时         | Workers Builds 或 Pages 变量 | D1 数据库 ID（在 D1 详情页）   |
 | `DEPLOY_KV_NAMESPACE_ID` | 构建时         | Workers Builds 或 Pages 变量 | KV 命名空间 ID（在 KV 详情页） |
 

@@ -63,7 +63,6 @@ Add runtime configuration separately in the same dashboard section:
 
 | Runtime variable           | Type             | What to put                                                           |
 | -------------------------- | ---------------- | --------------------------------------------------------------------- |
-| `NUXT_SITE_TOKEN`          | Encrypted secret | Dashboard login password and API password (strong, stable, ≥ 8 chars) |
 | `NUXT_CF_ACCOUNT_ID`       | Variable         | Cloudflare account ID (for analytics)                                 |
 | `NUXT_CF_API_TOKEN`        | Encrypted secret | Custom Token with **Account → Account Analytics → Read** only         |
 
@@ -79,7 +78,7 @@ Start a deployment from `master` and wait until it finishes.
 
 For a manual CLI deployment, build first. `pnpm deploy:pages` assumes `dist` already exists: it generates `wrangler.deploy.jsonc` from the `DEPLOY_*` values, applies remote D1 migrations, and then uploads `dist` with Wrangler. It does not run the application build.
 
-1. Open `/dashboard` and sign in with `NUXT_SITE_TOKEN`
+1. Open `/dashboard` and sign in via Cloudflare Access (email OTP)
 2. Open **Dashboard → Links** once (one-time storage setup)
 3. Create a link
 

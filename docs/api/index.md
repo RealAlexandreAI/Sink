@@ -20,10 +20,10 @@ Use your own domain. Public demo: [https://sink.cool/_docs/scalar](https://sink.
 Send your site password in the `Authorization` header:
 
 ```http
-Authorization: Bearer YOUR_SITE_TOKEN
-```
+CF-Access-Client-Id: YOUR_CLIENT_ID
+CF-Access-Client-Secret: YOUR_CLIENT_SECRET
 
-(`Bearer` means “here is the token”.) It must match `NUXT_SITE_TOKEN` exactly (at least 8 characters). With [Cloudflare Access](/configuration/cloudflare-access) enabled, browsers can also authenticate with a verified Access login.
+Machines authenticate with a Cloudflare Access **service token** (two headers above). Browsers authenticate via the Access session cookie. The legacy `Bearer` site-token scheme is retired. See [Cloudflare Access](/configuration/cloudflare-access).
 
 ## CORS
 

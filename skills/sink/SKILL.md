@@ -11,13 +11,14 @@ Sink is a link shortener running on Cloudflare. Manage links via REST API.
 
 ## Authentication
 
-All endpoints require Bearer token authentication:
+All endpoints are protected by Cloudflare Access at the edge. Machines authenticate with a **service token** via two headers:
 
 ```http
-Authorization: Bearer YOUR_SITE_TOKEN
+CF-Access-Client-Id: YOUR_CLIENT_ID
+CF-Access-Client-Secret: YOUR_CLIENT_SECRET
 ```
 
-Token = `NUXT_SITE_TOKEN` environment variable.
+Create the token in Zero Trust → Access → Service Auth. The worker maps it to the `root` admin identity.
 
 ## Base URL
 
@@ -297,7 +298,8 @@ Create link:
 
 ```bash
 curl -X POST https://your-domain/api/link/create \
-  -H "Authorization: Bearer YOUR_TOKEN" \
+  -H "CF-Access-Client-Id: YOUR_CLIENT_ID" \
+  -H "CF-Access-Client-Secret: YOUR_CLIENT_SECRET" \
   -H "Content-Type: application/json" \
   -d '{"url": "https://github.com/example"}'
 ```
@@ -306,14 +308,16 @@ List links:
 
 ```bash
 curl https://your-domain/api/link/list \
-  -H "Authorization: Bearer YOUR_TOKEN"
+  -H "CF-Access-Client-Id: YOUR_CLIENT_ID" \
+  -H "CF-Access-Client-Secret: YOUR_CLIENT_SECRET"
 ```
 
 Delete link:
 
 ```bash
 curl -X POST https://your-domain/api/link/delete \
-  -H "Authorization: Bearer YOUR_TOKEN" \
+  -H "CF-Access-Client-Id: YOUR_CLIENT_ID" \
+  -H "CF-Access-Client-Secret: YOUR_CLIENT_SECRET" \
   -H "Content-Type: application/json" \
   -d '{"slug": "my-slug"}'
 ```

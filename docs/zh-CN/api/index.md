@@ -20,10 +20,10 @@ description: Sink 的 OpenAPI 文档、身份认证、CORS 与端点索引。
 在请求头里发送站点密码：
 
 ```http
-Authorization: Bearer YOUR_SITE_TOKEN
-```
+CF-Access-Client-Id: YOUR_CLIENT_ID
+CF-Access-Client-Secret: YOUR_CLIENT_SECRET
 
-（`Bearer` 的意思是「后面是令牌」。）必须与 `NUXT_SITE_TOKEN` 完全一致（至少 8 个字符）。启用 [Cloudflare Access](/zh-CN/configuration/cloudflare-access) 后，浏览器也可以用已验证的 Access 登录访问 API。
+机器用 Cloudflare Access **Service Token**（上面两个头）认证；浏览器走 Access 会话 Cookie。旧版 `Bearer` 站点令牌已退役。参见 [Cloudflare Access](/zh-CN/configuration/cloudflare-access)。
 
 ## CORS
 

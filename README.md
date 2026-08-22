@@ -134,29 +134,24 @@ npx skills add miantiao-me/sink
 
 ## 🧰 MCP
 
-We currently do not support native MCP Server, but we have OpenAPI documentation, and you can use the following method to support MCP.
-
-> Replace the domain name in `OPENAPI_SPEC_URL` and the `API_KEY` below with your own instance configuration.
->
-> The `API_KEY` is the same as the `NUXT_SITE_TOKEN` in your instance's environment variables.
+Sink ships a native MCP server (Streamable HTTP, MCP 2.0) at `/mcp`. It is protected by Cloudflare Access — machines authenticate with a **service token**:
 
 ```json
 {
   "mcpServers": {
     "sink": {
-      "command": "uvx",
-      "args": [
-        "mcp-openapi-proxy"
-      ],
-      "env": {
-        "OPENAPI_SPEC_URL": "https://sink.cool/_docs/openapi.json",
-        "API_KEY": "SinkCool",
-        "TOOL_WHITELIST": "/api/link"
+      "type": "http",
+      "url": "https://your-domain/mcp",
+      "headers": {
+        "CF-Access-Client-Id": "YOUR_CLIENT_ID",
+        "CF-Access-Client-Secret": "YOUR_CLIENT_SECRET"
       }
     }
   }
 }
 ```
+
+Create the service token in Zero Trust → Access → Service Auth. Tools manage short links (create, list, search, delete, tags, stats). See [Cloudflare Access](/docs/configuration/cloudflare-access) for the full auth setup.
 
 ## 🙋🏻 FAQs
 

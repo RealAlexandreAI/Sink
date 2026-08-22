@@ -38,10 +38,8 @@ After creating D1 and KV, open each resource’s detail page and copy its **ID**
 
 Follow the Workers or Pages guide to connect the fork, add bindings, and set variables.
 
-::: warning Set `NUXT_SITE_TOKEN` yourself
-This is your **dashboard login password** and the password used by API tools. Use a long random string (at least 8 characters) and keep it stable — changing it signs everyone out.
-
-If you skip it, Sink may invent a random password at build time that can change on the next deploy, and you will not be able to log in reliably.
+::: warning Authentication is Cloudflare Access
+The dashboard is protected by Cloudflare Access (email OTP); API and MCP use a service token. The legacy `NUXT_SITE_TOKEN` is retired. See [Cloudflare Access](/configuration/cloudflare-access).
 :::
 
 Other settings: [configuration reference](/configuration/).
@@ -49,7 +47,7 @@ Other settings: [configuration reference](/configuration/).
 ## 5. First login and first link
 
 1. Open `https://your-domain/dashboard`
-2. Sign in with the `NUXT_SITE_TOKEN` you set
+2. Sign in via Cloudflare Access (email OTP)
 3. Open **Dashboard → Links** once
 
 ::: tip Why open Links once?

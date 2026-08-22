@@ -38,10 +38,8 @@ Sink 是一款自托管短链接应用，带访问分析。它跑在 Cloudflare 
 
 按 Workers 或 Pages 指南连接 Fork、添加绑定并填写变量。
 
-::: warning 请自行设置 `NUXT_SITE_TOKEN`
-这是**仪表盘登录密码**，也是 API 工具使用的密码。请用足够长的随机字符串（至少 8 个字符），并保持稳定 — 改了之后所有人都会退出登录。
-
-如果跳过，Sink 可能在构建时随机生成密码，下次部署可能变化，导致无法稳定登录。
+::: warning 认证走 Cloudflare Access
+仪表盘由 Cloudflare Access 保护（邮箱 OTP）；API 和 MCP 用 Service Token。旧版 `NUXT_SITE_TOKEN` 已退役。参见 [Cloudflare Access](/zh-CN/configuration/cloudflare-access)。
 :::
 
 其他设置见[配置参考](/zh-CN/configuration/)。
@@ -49,7 +47,7 @@ Sink 是一款自托管短链接应用，带访问分析。它跑在 Cloudflare 
 ## 5. 首次登录并创建链接
 
 1. 打开 `https://你的域名/dashboard`
-2. 用你设置的 `NUXT_SITE_TOKEN` 登录
+2. 通过 Cloudflare Access（邮箱 OTP）登录
 3. 打开一次 **Dashboard → Links**
 
 ::: tip 为什么要先打开一次 Links？

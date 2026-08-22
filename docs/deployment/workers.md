@@ -49,7 +49,6 @@ Under **Settings → Variables and Secrets**, add:
 
 | Variable             | Type             | Purpose                                                                           |
 | -------------------- | ---------------- | --------------------------------------------------------------------------------- |
-| `NUXT_SITE_TOKEN`    | Encrypted secret | Dashboard login password and API password (at least 8 characters, keep it stable) |
 | `NUXT_CF_ACCOUNT_ID` | Variable         | Recommended for analytics                                                         |
 | `NUXT_CF_API_TOKEN`  | Encrypted secret | Recommended for analytics                                                         |
 
@@ -61,7 +60,7 @@ Confirm bindings use the exact names `DB`, `KV`, `ANALYTICS`, `R2`, and `AI`.
 
 Start a build from `master` and wait until it finishes.
 
-1. Open `/dashboard` and sign in with `NUXT_SITE_TOKEN`
+1. Open `/dashboard` and sign in via Cloudflare Access (email OTP)
 2. Open **Dashboard → Links** once (one-time storage setup)
 3. Create a link
 
