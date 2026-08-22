@@ -17,7 +17,7 @@ Use your own domain. Public demo: [https://sink.cool/_docs/scalar](https://sink.
 
 ## Authentication
 
-Send your site password in the `Authorization` header:
+Send your Cloudflare Access service token in these headers:
 
 ```http
 CF-Access-Client-Id: YOUR_CLIENT_ID
