@@ -13,7 +13,7 @@
     "build:docs": "pnpm --filter @sink/docs build",
     "preview:docs": "pnpm --filter @sink/docs preview",
     "analyze": "nuxt analyze",
-    "test": "vitest",
+    "test": "vitest run && vitest run -c vitest.unit.config.ts",
     "prebuild": "pnpm build:sphere",
     "build": "NODE_OPTIONS=--max-old-space-size=8192 nuxt build",
     "postbuild": "test \"$CF_PAGES:$CF_PAGES_BRANCH\" != \"1:master\" || pnpm db:migrate:remote",
@@ -37,7 +37,9 @@
     "deploy:worker": "pnpm db:migrate:remote && wrangler deploy .output/server/index.mjs --assets .output/public --config wrangler.deploy.jsonc",
     "preview": "wrangler dev .output/server/index.mjs --assets .output/public ",
     "postinstall": "pnpm build:map && nuxt prepare",
-    "prepare": "simple-git-hooks"
+    "prepare": "simple-git-hooks",
+    "test:unit": "vitest run -c vitest.unit.config.ts",
+    "test:watch": "vitest"
   },
   "devDependencies": {
     "@antfu/eslint-config": "^9.1.0",
@@ -98,6 +100,7 @@
     "virtua": "^0.49.3",
     "vite": "^8.1.4",
     "vitest": "^4.1.10",
+    "vue": "^3.5.39",
     "vue-input-otp": "^0.3.2",
     "vue-sonner": "^2.0.9",
     "vue-tsc": "^3.3.7",

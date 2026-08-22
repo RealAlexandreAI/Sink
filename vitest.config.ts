@@ -42,6 +42,11 @@ export default defineConfig(async ({ mode }) => ({
     }),
   ],
   test: {
+    include: [
+      'tests/api/**/*.spec.ts',
+      'tests/redirect.spec.ts',
+      'tests/webhook.spec.ts',
+    ],
     env: loadEnv(mode, process.cwd(), ''),
     isolate: false,
     maxWorkers: 1,
